@@ -15,7 +15,7 @@ L.Mixin.ContextMenu = {
 
 	_initContextMenu: function () {
 		this._items = [];
-	
+
 		this.on('contextmenu', this._showContextMenu, this);
 	},
 
@@ -30,29 +30,33 @@ L.Mixin.ContextMenu = {
 				this._map.contextmenu.hideAllItems();
 			}
 
+			if (typeof this.options.contextmenuItems === 'function'){
+				this.options.contextmenuItems = this.options.contextmenuItems();
+			}
+
 			for (i = 0, l = this.options.contextmenuItems.length; i < l; i++) {
 				itemOptions = this.options.contextmenuItems[i];
 				this._items.push(this._map.contextmenu.insertItem(itemOptions, itemOptions.index));
 			}
 
 			this._map.once('contextmenu.hide', this._hideContextMenu, this);
-		
+
 			this._map.contextmenu.showAt(pt, {relatedTarget: this});
 		}
 	},
 
-	_hideContextMenu: function () {
+	_hideContextMenu: function (e) {
 		var i, l;
 
 		for (i = 0, l = this._items.length; i < l; i++) {
-			this._map.contextmenu.removeItem(this._items[i]);
+			e._map.contextmenu.removeItem(this._items[i]);
 		}
-		this._items.length = 0;		
+		this._items.length = 0;
 
 		if (!this.options.contextmenuInheritItems) {
-			this._map.contextmenu.showAllItems();
+			e._map.contextmenu.showAllItems();
 		}
-	}	
+	}
 };
 
 var classes = [L.Marker, L.Path],
@@ -72,6 +76,10 @@ for (i = 0, l = classes.length; i < l; i++) {
 		cls.prototype.options = defaultOptions;
 	} else {
 		cls.mergeOptions(defaultOptions);
+	}
+
+	if (typeof cls.prototype.options.contextmenuItems === 'function') {
+		cls.prototype.options.contextmenuItems = cls.prototype.options.contextmenuItems();
 	}
 
 	cls.addInitHook(function () {
