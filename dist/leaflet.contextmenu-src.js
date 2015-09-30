@@ -497,12 +497,12 @@ L.Mixin.ContextMenu = {
 		var i, l;
 
 		for (i = 0, l = this._items.length; i < l; i++) {
-			e._map.contextmenu.removeItem(this._items[i]);
+			e.contextmenu.removeItem(this._items[i]);
 		}
 		this._items.length = 0;
 
 		if (!this.options.contextmenuInheritItems) {
-			e._map.contextmenu.showAllItems();
+			e.contextmenu.showAllItems();
 		}
 	}
 };
